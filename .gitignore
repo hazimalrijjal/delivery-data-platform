@@ -1,0 +1,15 @@
+data/raw/
+warehouse/
+venv/
+__pycache__/
+.pytest_cache/
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+logs/
+dbt_project/.user.yml
+output/
+stream_in/
+spark-warehouse/
+metastore_db/
+derby.log
