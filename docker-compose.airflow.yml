@@ -1,0 +1,19 @@
+# UNTESTED by the author's tooling: the DAG itself was run with `airflow dags test` on Airflow 3.3.2, this compose file was not.
+# One container running "airflow standalone" (scheduler, API server, DAG processor, SQLite). For learning, not for production.
+#
+#   docker compose -f docker-compose.airflow.yml up
+#   open http://localhost:8080 ; the generated admin password is printed in the container log (search for "Password")
+#
+# Put the project in a normal folder (not inside OneDrive). DuckDB uses file locks and can misbehave on synced folders.
+services:
+  airflow:
+    image: apache/airflow:3.3.2
+    command: standalone
+    ports: ["8080:8080"]
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/platform/dags
+      PLATFORM_ROOT: /opt/platform
+      _PIP_ADDITIONAL_REQUIREMENTS: "dbt-core==1.12.6 dbt-duckdb==1.11.1 duckdb==2.0.0 pandas numpy pyarrow"
+    volumes:
+      - .:/opt/platform
