@@ -1,0 +1,43 @@
+# Redash (a dashboard tool) on your own computer. Modelled on Redash's official setup (getredash/setup).
+# NOT tested by the author: it needs Docker images that the build sandbox cannot download.
+# Start:   docker compose -f redash/docker-compose.redash.yml up -d
+# Open:    http://localhost:5000
+x-redash: &redash
+  image: redash/redash:25.8.0
+  env_file: .env
+  depends_on:
+    - postgres
+    - redis
+  restart: unless-stopped
+
+services:
+  server:
+    <<: *redash
+    command: server
+    ports:
+      - "5000:5000"
+    environment:
+      REDASH_WEB_WORKERS: "2"
+  scheduler:
+    <<: *redash
+    command: scheduler
+    depends_on:
+      - server
+  worker:
+    <<: *redash
+    command: worker
+    environment:
+      QUEUES: "queries,scheduled_queries,schemas,periodic,emails,default"
+      WORKERS_COUNT: "2"
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+  postgres:
+    image: postgres:17-alpine
+    env_file: .env
+    volumes:
+      - redash-postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  redash-postgres:

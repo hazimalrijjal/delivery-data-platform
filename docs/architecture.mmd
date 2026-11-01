@@ -1,0 +1,36 @@
+flowchart TB
+  subgraph SRC["Sources (synthetic)"]
+    GEN["data_gen/generate.py<br/>CSV batches + manifest.json"]
+    EVT["Order events<br/>(replayed stream)"]
+  end
+
+  subgraph ORCH["Airflow DAG: delivery_pipeline"]
+    direction LR
+    S["wait for batch<br/>(sensor)"] --> L["load raw<br/>(idempotent)"] --> D["dbt build"] --> Q["data-quality gate"]
+  end
+
+  subgraph WH["Warehouse (same dbt models on both)"]
+    direction TB
+    RAW["raw<br/>text + audit columns"] --> STG["staging<br/>dedupe, type, flag"] --> MRT["marts<br/>facts, dims, KPIs, dq_report"]
+  end
+
+  subgraph TARGETS["Targets"]
+    DUCK["DuckDB (local dev)"]
+    BQ["BigQuery (Terraform-created datasets)"]
+  end
+
+  subgraph SPARK["Spark"]
+    BATCH["PySpark batch KPIs<br/>reconciled to the cent"]
+    STREAM["Structured Streaming<br/>watermark, dedupe, 5-min windows"]
+  end
+
+  GEN --> S
+  L --> RAW
+  D --> STG
+  MRT --- DUCK
+  MRT --- BQ
+  GEN -. same CSVs .-> BATCH
+  BATCH -. must equal .-> MRT
+  EVT --> STREAM
+  BQ --> RED["Redash dashboard<br/>(read-only service account)"]
+  TF["Terraform"] -. creates .-> BQ

@@ -1,0 +1,4 @@
+# Copy this file to terraform.tfvars and put your own project id in.
+project_id = "your-project-id"
+location   = "US"
+create_redash_user = true
