@@ -1,0 +1,4 @@
+# Extra packages for the Spark and streaming parts. Needs Java 17 or 21 installed (java -version).
+# On Windows, Spark often needs extra setup (HADOOP_HOME and winutils); WSL2 (Ubuntu) is much easier.
+pyspark==4.3.0
+kafka-python

@@ -1,0 +1,25 @@
+# UNTESTED: written from Redpanda's documented single-node setup, but never started by the author's tooling (no Docker daemon there).
+# Redpanda speaks the Kafka protocol, so the producer and the Spark Kafka source work against it unchanged.
+#
+#   docker compose -f docker-compose.redpanda.yml up -d
+#   docker exec -it redpanda rpk topic create order_events -p 3
+#   python streaming/producer.py --events data/raw/batch_001/order_events.csv --to-kafka localhost:9092 --topic order_events --speed 3600 --limit 50000
+#   python streaming/stream_job.py --source kafka --bootstrap localhost:9092 --topic order_events --out output/event_windows --checkpoint output/_ckpt
+#   docker exec -it redpanda rpk topic consume order_events -n 3        (look at the raw messages)
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      - --mode
+      - dev-container
+      - --smp
+      - "1"
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+    ports:
+      - "9092:9092"
