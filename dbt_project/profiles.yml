@@ -1,0 +1,23 @@
+# Local profile: DuckDB file written by ingest/load_raw.py. Run dbt from this folder: dbt build --profiles-dir .
+# The "bq" and "bq_sandbox" targets run the same models on BigQuery (see docs/BIGQUERY.md). It needs GCP_PROJECT set and `gcloud auth application-default login`.
+delivery_platform:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../warehouse/delivery.duckdb
+      threads: 4
+    bq:                   # billing-enabled project: fct_orders is incremental (MERGE)
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT', 'my-gcp-project') }}"
+      dataset: analytics                 # default dataset; models use the schemas staging and marts (see macros/generate_schema_name.sql)
+      location: "{{ env_var('BQ_LOCATION', 'US') }}"
+      threads: 4
+    bq_sandbox:           # free BigQuery sandbox (no billing): no DML, so fct_orders is a plain table here
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('GCP_PROJECT', 'my-gcp-project') }}"
+      dataset: analytics                 # default dataset; models use the schemas staging and marts (see macros/generate_schema_name.sql)
+      location: "{{ env_var('BQ_LOCATION', 'US') }}"
+      threads: 4

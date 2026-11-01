@@ -1,0 +1,11 @@
+version: 2
+sources:
+  - name: raw
+    schema: raw
+    description: Files loaded as received by ingest/load_raw.py. Every column is text.
+    tables:
+      - name: customers
+      - name: merchants
+      - name: couriers
+      - name: orders
+      - name: order_events

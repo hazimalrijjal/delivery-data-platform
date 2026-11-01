@@ -1,0 +1,49 @@
+version: 2
+models:
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+  - name: stg_merchants
+    columns:
+      - name: merchant_id
+        data_tests: [unique, not_null]
+      - name: category
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [restaurant, grocery, pharmacy, retail]
+  - name: stg_couriers
+    columns:
+      - name: courier_id
+        data_tests: [unique, not_null]
+  - name: stg_orders
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [delivered, cancelled_customer, cancelled_merchant, cancelled_no_courier]
+      - name: merchant_id
+        data_tests:
+          - relationships:
+              arguments: {to: "ref('stg_merchants')", field: merchant_id}
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments: {to: "ref('stg_customers')", field: customer_id}
+  - name: stg_order_events
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+      - name: order_id
+        data_tests:
+          - relationships:
+              arguments: {to: "ref('stg_orders')", field: order_id}
+      - name: event_type
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [placed, accepted, picked_up, delivered, cancelled]
