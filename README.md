@@ -36,6 +36,8 @@ scripts\run_pipeline.bat
 
 ## Orchestration and BigQuery
 
+![Redash dashboard](docs/dashboard.png)
+
 - **Airflow:** `dags/delivery_pipeline.py`, details and what was verified in [docs/AIRFLOW.md](docs/AIRFLOW.md).
 - **BigQuery:** the same dbt models run on DuckDB (`dev`) and BigQuery (`bq`, `bq_sandbox`) through cross-database macros, see [docs/BIGQUERY.md](docs/BIGQUERY.md).
   Run by the author on a free BigQuery sandbox. Money was changed from floating point to exact decimals after a cross-engine check found a one-cent rounding bug (see docs/SPARK_AND_STREAMING.md). The BigQuery build was then repeated and all six queries in `scripts/bq_verify.sql` matched, including total commission 709496.31 (it was 709489.92 with floats).
@@ -99,5 +101,4 @@ Tests: `pytest -q`. Tests that need Airflow, the Google client, or Spark and Jav
 
 ## AI assistance
 
-This project is built with the help of Claude (Anthropic), which wrote most of the code. The author is responsible for understanding it,
-and the explanation notes for each stage are written so the code can be explained line by line.
+This project is built with the help of Claude (Anthropic). I am responsible for understanding it, and explaining the code line by line.
