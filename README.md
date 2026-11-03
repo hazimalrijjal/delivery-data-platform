@@ -98,7 +98,3 @@ couriers that do not exist, missing customer ids, unparseable timestamps. The st
 | Redash | run by the author on Docker: connected to BigQuery with the read-only account and loaded the dashboard from the 7 queries |
 
 Tests: `pytest -q`. Tests that need Airflow, the Google client, or Spark and Java skip themselves when those are not installed.
-
-## AI assistance
-
-This project is built with the help of Claude (Anthropic). I am responsible for understanding it, and explaining the code line by line.
